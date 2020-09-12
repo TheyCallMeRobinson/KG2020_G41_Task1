@@ -76,7 +76,6 @@ public class House implements Drawable {
         private int border;
         private Color borderColor;
 
-
         @Override
         public void draw(Graphics2D g) {
 
