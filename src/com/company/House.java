@@ -33,6 +33,8 @@ public class House implements Drawable {
     private int antennaCount = 3;
     private int[] xPoints = new int[6];
     private int[] yPoints = new int[6];
+    private int windowLength;
+    private int windowHeight;
 
     private void calculateReferencePoints() {
         xPoints[0] = x - l/2;
@@ -59,8 +61,21 @@ public class House implements Drawable {
         this.angle = angle*Math.PI/180;
         floorCount = h/50;
         windowsPerFloor = l/50;
+        windowLength = l/windowsPerFloor;
+        windowHeight = h/floorCount;
     }
-
+    public House(int x, int y, int l, int w, int h, int floorCount, int windowsPerFloor,int angle) {
+        this.x = x;
+        this.y = y;
+        this.l = l;
+        this.w = w;
+        this.h = h;
+        this.angle = angle * Math.PI / 180;
+        this.floorCount = floorCount;
+        this.windowsPerFloor = windowsPerFloor;
+        windowLength = l / windowsPerFloor;
+        windowHeight = h / floorCount;
+    }
     public void draw(Graphics2D g) {
         calculateReferencePoints();
         g.setColor(new Color(134, 121, 121));
@@ -69,11 +84,10 @@ public class House implements Drawable {
         g.fillPolygon(new Polygon(new int[]{xPoints[0], xPoints[1], xPoints[2], xPoints[3]}, new int[]{yPoints[0], yPoints[1], yPoints[2], yPoints[3]}, 4));
         g.setColor(new Color(80, 73, 73));
         g.fillPolygon(new int[]{xPoints[2], xPoints[3], xPoints[4], xPoints[5]}, new int[]{yPoints[2], yPoints[3], yPoints[4], yPoints[5]}, 4);
-        int windowLength = l/windowsPerFloor;
-        int windowHeight = h/floorCount;
+
         for(int i = 0; i < floorCount; i++)
             for(int j = 0; j < windowsPerFloor; j++) {
-                HouseWindow hw = new HouseWindow(xPoints[0] + windowLength*(2*j + 1)/2, yPoints[0] + windowHeight*(2*i + 1)/2);
+                HouseWindow hw = new HouseWindow(xPoints[0] + windowLength*(2*j + 1)/2, yPoints[0] + windowHeight*(2*i + 1)/2, 0.8, 0.8, 3);
                 hw.draw(g);
             }
     }
@@ -93,6 +107,13 @@ public class House implements Drawable {
             sizeY = 40;
             border = 3;
         }
+        public HouseWindow(int x, int y, double scaleX, double scaleY, int border) {
+            this.x = x;
+            this.y = y;
+            this.sizeY = (int)(windowHeight*scaleY);
+            this.sizeX = (int)(windowLength*scaleX);
+            this.border = border;
+        }
 
         @Override
         public void draw(Graphics2D g) {
@@ -102,8 +123,8 @@ public class House implements Drawable {
             g.fillRect(x - sizeX/2, y - sizeY/2, sizeX, sizeY);
             g.setColor(glassColor);
             g.fillRect(x - sizeX/2 + border, y - sizeY/2 + border, (sizeX - border*3)/2, (sizeY - border*3)/2);
-            g.fillRect(x - sizeX/2 + border, y + border/2, (sizeX - border*3)/2, (sizeY - border*3)/2);
-            g.fillRect(x + border/2, y - sizeY/2 + border, (sizeX - border*3)/2, sizeY - border*10/4);
+            g.fillRect(x - sizeX/2 + border, y + border/2+1, (sizeX - border*3)/2, (sizeY - border*3)/2);
+            g.fillRect(x + border/2, y - sizeY/2 + border, (sizeX - border*3)/2, sizeY - 2*border);
         }
     }
 }
