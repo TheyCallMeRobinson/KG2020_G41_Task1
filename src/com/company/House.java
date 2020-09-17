@@ -30,7 +30,7 @@ public class House implements Drawable {
     private double angle;
     private int floorCount;
     private int windowsPerFloor;
-    private int antennaCount = 3;
+    private int antennaCount = 300;
     private int[] xPoints = new int[6];
     private int[] yPoints = new int[6];
     private int windowLength;
@@ -64,7 +64,7 @@ public class House implements Drawable {
         windowLength = l/windowsPerFloor;
         windowHeight = h/floorCount;
     }
-    public House(int x, int y, int l, int w, int h, int floorCount, int windowsPerFloor,int angle) {
+    public House(int x, int y, int l, int w, int h, int floorCount, int windowsPerFloor, int angle) {
         this.x = x;
         this.y = y;
         this.l = l;
@@ -76,6 +76,7 @@ public class House implements Drawable {
         windowLength = l / windowsPerFloor;
         windowHeight = h / floorCount;
     }
+
     public void draw(Graphics2D g) {
         calculateReferencePoints();
         g.setColor(new Color(134, 121, 121));
@@ -86,15 +87,17 @@ public class House implements Drawable {
         g.fillPolygon(new int[]{xPoints[2], xPoints[3], xPoints[4], xPoints[5]}, new int[]{yPoints[2], yPoints[3], yPoints[4], yPoints[5]}, 4);
 
         for(int i = 0; i < floorCount; i++)
-            for(int j = 0; j < windowsPerFloor; j++) {
-                HouseWindow hw = new HouseWindow(xPoints[0] + windowLength*(2*j + 1)/2, yPoints[0] + windowHeight*(2*i + 1)/2, 0.8, 0.8, 3);
-                hw.draw(g);
-            }
+            for(int j = 0; j < windowsPerFloor; j++)
+                new HouseWindow(xPoints[0] + windowLength*(2*j + 1)/2, yPoints[0] + windowHeight*(2*i + 1)/2, 0.8, 0.8, 3).draw(g);
+
+        for(int i = 0; i < antennaCount; i++)
+            new HouseAntenna((int)(xPoints[0] + (i+1)*l/(antennaCount + 1) + w*Math.cos(angle)/2), (int)(yPoints[0] - w*Math.sin(angle)/2)).draw(g);
+
     }
 
     private class HouseWindow implements Drawable {
         private int x, y;
-        private int border;
+        private int innerBorder;
         private int sizeX;
         private int sizeY;
         private Color glassColor = new Color(128, 159, 255);
@@ -105,14 +108,14 @@ public class House implements Drawable {
             this.y = y;
             sizeX = 40;
             sizeY = 40;
-            border = 3;
+            innerBorder = 3;
         }
-        public HouseWindow(int x, int y, double scaleX, double scaleY, int border) {
+        public HouseWindow(int x, int y, double scaleX, double scaleY, int innerBorder) {
             this.x = x;
             this.y = y;
             this.sizeY = (int)(windowHeight*scaleY);
             this.sizeX = (int)(windowLength*scaleX);
-            this.border = border;
+            this.innerBorder = innerBorder;
         }
 
         @Override
@@ -122,9 +125,33 @@ public class House implements Drawable {
             g.setColor(borderColor);
             g.fillRect(x - sizeX/2, y - sizeY/2, sizeX, sizeY);
             g.setColor(glassColor);
-            g.fillRect(x - sizeX/2 + border, y - sizeY/2 + border, (sizeX - border*3)/2, (sizeY - border*3)/2);
-            g.fillRect(x - sizeX/2 + border, y + border/2+1, (sizeX - border*3)/2, (sizeY - border*3)/2);
-            g.fillRect(x + border/2, y - sizeY/2 + border, (sizeX - border*3)/2, sizeY - 2*border);
+            g.fillRect(x - sizeX/2 + innerBorder, y - sizeY/2 + innerBorder, (sizeX - innerBorder *3)/2, (sizeY - innerBorder *3)/2);
+            g.fillRect(x - sizeX/2 + innerBorder, y + innerBorder /2+1, (sizeX - innerBorder *3)/2, (sizeY - innerBorder *3)/2);
+            g.fillRect(x + innerBorder /2, y - sizeY/2 + innerBorder, (sizeX - innerBorder *3)/2, sizeY - 2* innerBorder);
+        }
+    }
+
+    private class HouseAntenna implements Drawable {
+        int x, y;
+        int h, w;
+        int antennaW;
+
+        public HouseAntenna(int x, int y) {
+            this.x = x;
+            this.y = y;
+            this.h = 50;
+            this.w = 50;
+            this.antennaW = 30;
+        }
+
+        public void draw(Graphics2D g) {
+            g.setColor(Color.black);
+            g.drawLine(x, y, x, y - h);
+            g.drawLine(x - h/2, y - h, x + h/2, y - h);
+            g.drawLine((int)(x - h/2 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x - h/2 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
+            g.drawLine((int)(x - h/4 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x - h/4 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
+            g.drawLine((int)(x + h/4 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x + h/4 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
+            g.drawLine((int)(x + h/2 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x + h/2 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
         }
     }
 }
