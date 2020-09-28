@@ -30,7 +30,7 @@ public class House implements Drawable {
     private double angle;
     private int floorCount;
     private int windowsPerFloor;
-    private int antennaCount = 300;
+    private int antennaCount = 1;
     private int[] xPoints = new int[6];
     private int[] yPoints = new int[6];
     private int windowLength;
@@ -88,11 +88,17 @@ public class House implements Drawable {
 
         for(int i = 0; i < floorCount; i++)
             for(int j = 0; j < windowsPerFloor; j++)
-                new HouseWindow(xPoints[0] + windowLength*(2*j + 1)/2, yPoints[0] + windowHeight*(2*i + 1)/2, 0.8, 0.8, 3).draw(g);
+                if(j == windowsPerFloor/2 && i == floorCount - 1)
+                     new HouseDoor(xPoints[0] + windowLength * (2 * j + 1) / 2, yPoints[0] + windowHeight * (2 * i + 1) / 2).draw(g);
+                else new HouseWindow(xPoints[0] + windowLength * (2 * j + 1) / 2, yPoints[0] + windowHeight * (2 * i + 1) / 2, 0.8, 0.8, 3).draw(g);
 
         for(int i = 0; i < antennaCount; i++)
             new HouseAntenna((int)(xPoints[0] + (i+1)*l/(antennaCount + 1) + w*Math.cos(angle)/2), (int)(yPoints[0] - w*Math.sin(angle)/2)).draw(g);
 
+        g.setColor(new Color(0x00FEFB));
+        g.rotate(-angle, xPoints[3], yPoints[3]);
+        g.drawString("ОБЩЕЖИТИЕ ВГУ", xPoints[3], yPoints[3] + 10);
+        g.rotate(angle, xPoints[3], yPoints[3]);
     }
 
     private class HouseWindow implements Drawable {
@@ -152,6 +158,28 @@ public class House implements Drawable {
             g.drawLine((int)(x - h/4 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x - h/4 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
             g.drawLine((int)(x + h/4 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x + h/4 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
             g.drawLine((int)(x + h/2 - antennaW*Math.cos(angle)), (int)(y - h + antennaW*Math.sin(angle)), (int)(x + h/2 + antennaW*Math.cos(angle)), (int)(y - h - antennaW*Math.sin(angle)));
+        }
+    }
+
+    private class HouseDoor implements Drawable {
+        private int x, y;
+        private int length, height;
+
+        public HouseDoor(int x, int y) {
+            this.x = x - windowLength / 3;
+            this.y = y - windowHeight * 3 / 8;
+            this.length = windowLength * 2 / 3;
+            this.height = windowHeight*7/8;
+        }
+
+        @Override
+        public void draw(Graphics2D g) {
+            g.setColor(new Color(0xC65100));
+            g.fillRect(x, y, length, height);
+            g.setColor(new Color(0x743300));
+            g.fillRect(x + 3, y + 3, length - 6, height - 6);
+            g.setColor(Color.YELLOW);
+            g.fillOval(x + 4, y + height/2, length/10, height/10);
         }
     }
 }
