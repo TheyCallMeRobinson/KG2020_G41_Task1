@@ -30,7 +30,7 @@ public class House implements Drawable {
     private double angle;
     private int floorCount;
     private int windowsPerFloor;
-    private int antennaCount = 1;
+    private int antennaCount = 5;
     private int[] xPoints = new int[6];
     private int[] yPoints = new int[6];
     private int windowLength;
